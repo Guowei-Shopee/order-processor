@@ -2,11 +2,16 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext  
 import re  
 import pyperclip  # 用于复制到剪贴板  
+from updater import check_for_updates, show_update_dialog  
+# 定义版本号  
+APP_VERSION = "1.0.0"  
+GITHUB_OWNER = "Gguowei-Shopee"  # 替换为您实际的GitHub用户名  
+GITHUB_REPO = "order-processor"    # 替换为您实际计划使用的仓库名
 
 class OrderProcessorApp:  
     def __init__(self, root):  
         self.root = root  
-        self.root.title("订单处理工具")  
+        self.root.title(f"订单处理工具 v{APP_VERSION}") 
         self.root.geometry("900x650")  # 调整窗口大小以适应新增控件  
         
         # 创建主框架  
@@ -75,7 +80,51 @@ class OrderProcessorApp:
         self.status_var.set("就绪")  
         status_bar = ttk.Label(main_frame, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W)  
         status_bar.pack(fill=tk.X, padx=5, pady=2)  
+        # 添加菜单栏  
+        self.create_menu()  
+                
+        # 初始化后检查更新（延迟2秒，让界面先加载完毕）  
+        self.root.after(2000, self.check_for_updates)
+
+    def create_menu(self):  
+        """创建菜单栏"""  
+        menubar = tk.Menu(self.root)  
         
+        # 文件菜单  
+        file_menu = tk.Menu(menubar, tearoff=0)  
+        file_menu.add_command(label="清空", command=self.clear_all)  
+        file_menu.add_separator()  
+        file_menu.add_command(label="退出", command=self.root.quit)  
+        menubar.add_cascade(label="文件", menu=file_menu)  
+        
+        # 帮助菜单  
+        help_menu = tk.Menu(menubar, tearoff=0)  
+        help_menu.add_command(label="检查更新", command=self.check_for_updates)  
+        help_menu.add_command(label="关于", command=self.show_about)  
+        menubar.add_cascade(label="帮助", menu=help_menu)  
+        
+        self.root.config(menu=menubar)  
+
+    def check_for_updates(self):  
+        """检查更新"""  
+        has_update, latest_version, download_url, changelog = check_for_updates(  
+            APP_VERSION, GITHUB_OWNER, GITHUB_REPO  
+        )  
+        
+        if has_update and download_url:  
+            show_update_dialog(  
+                self.root, APP_VERSION, latest_version, download_url, changelog  
+            )  
+
+    def show_about(self):  
+        """显示关于对话框"""  
+        messagebox.showinfo(  
+            "关于订单处理工具",   
+            f"订单处理工具 v{APP_VERSION}\n\n"  
+            "一个高效的订单号提取和格式化工具\n\n"  
+            "© 2023 您的名字或组织"  
+        )
+
     def extract_order_numbers(self, text):  
         """提取SLS单号和订单编号，根据用户选择返回不同结果"""  
         # SLS单号模式: 以指定的双字母开头(BR/CL/CO/MX/MY/PH/SG/TH/TW/VN)加上13个字母数字字符  
