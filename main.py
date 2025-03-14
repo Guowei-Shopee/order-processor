@@ -3,9 +3,10 @@ from tkinter import ttk, scrolledtext
 import re  
 import pyperclip  # 用于复制到剪贴板  
 from updater import check_for_updates, show_update_dialog  
+from tkinter import messagebox  
 # 定义版本号  
-APP_VERSION = "1.0.0"  
-GITHUB_OWNER = "Gguowei-Shopee"  # 替换为您实际的GitHub用户名  
+APP_VERSION = "1.0.1"  
+GITHUB_OWNER = "Guowei-Shopee"  # 替换为您实际的GitHub用户名  
 GITHUB_REPO = "order-processor"    # 替换为您实际计划使用的仓库名
 
 class OrderProcessorApp:  
@@ -122,7 +123,7 @@ class OrderProcessorApp:
             "关于订单处理工具",   
             f"订单处理工具 v{APP_VERSION}\n\n"  
             "一个高效的订单号提取和格式化工具\n\n"  
-            "© 2023 您的名字或组织"  
+            "© 2025 Guowei Huang"  
         )
 
     def extract_order_numbers(self, text):  
